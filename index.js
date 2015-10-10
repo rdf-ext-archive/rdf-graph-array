@@ -109,7 +109,16 @@ rdf.Literal = function (value, language, datatype) {
   this.interfaceName = 'Literal'
   this.nominalValue = value
   this.language = language
-  this.datatype = typeof datatype === 'string' ? new rdf.NamedNode(datatype) : datatype
+
+  if (this.language) {
+    this.datatype = rdf.Literal.langString
+  } else {
+    if (datatype) {
+      this.datatype = typeof datatype === 'string' ? new rdf.NamedNode(datatype) : datatype
+    } else {
+      this.datatype = rdf.Literal.string
+    }
+  }
 }
 
 rdf.Literal.prototype.toString = function () {
@@ -119,7 +128,7 @@ rdf.Literal.prototype.toString = function () {
     string += '@' + this.language
   }
 
-  if (this.datatype) {
+  if (this.datatype && !rdf.Literal.string.equals(this.datatype) && !rdf.Literal.langString.equals(this.datatype)) {
     string += '^^' + this.datatype.toString()
   }
 
@@ -145,7 +154,7 @@ rdf.Literal.prototype.equals = function (other) {
         return false
       }
 
-      if ((this.datatype && !this.datatype.equals(other.datatype)) || !!other.datatype) {
+      if ((this.datatype && !this.datatype.equals(other.datatype))) {
         return false
       }
 
@@ -155,6 +164,9 @@ rdf.Literal.prototype.equals = function (other) {
 
   return false
 }
+
+rdf.Literal.langString = new rdf.NamedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#langString')
+rdf.Literal.string = new rdf.NamedNode('http://www.w3.org/2001/XMLSchema#string')
 
 rdf.Triple = function (subject, predicate, object) {
   this.subject = subject
@@ -262,6 +274,18 @@ rdf.Graph.prototype.addArray = function (array) {
   return this
 }
 
+rdf.Graph.prototype.difference = function (other) {
+  var difference = new rdf.Graph()
+
+  this.forEach(function (quad) {
+    if (!other.includes(quad)) {
+      difference.add(quad)
+    }
+  })
+
+  return difference
+};
+
 rdf.Graph.prototype.every = function (callback) {
   return this._graph.every(callback)
 }
@@ -275,6 +299,30 @@ rdf.Graph.prototype.forEach = function (callback) {
 
   this._graph.forEach(function (quad) {
     callback(quad, self)
+  })
+}
+
+rdf.Graph.prototype.includes = function (quad) {
+  return this.match(quad.subject, quad.predicate, quad.object, quad.graph).length === 1
+}
+
+rdf.Graph.prototype.intersection = function (other) {
+  var intersection = new rdf.Graph()
+
+  this.forEach(function (quad) {
+    if (other.includes(quad)) {
+      intersection.add(quad)
+    }
+  })
+
+  return intersection
+}
+
+rdf.Graph.prototype.map = function (callback) {
+  var self = this
+
+  return this._graph.map(function (quad) {
+    return callback(quad, self)
   })
 }
 

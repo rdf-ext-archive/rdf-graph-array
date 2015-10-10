@@ -336,6 +336,72 @@ describe('RDF-Graph', function () {
       assert.equal(graph.length, 1)
     })
 
+    it('.difference should return a graph with triples not included in the other graph', function () {
+      var graphA = new rdf.Graph()
+      var graphB = new rdf.Graph()
+      var tripleA = new rdf.Triple(
+        new rdf.NamedNode('http://example.org/subject'),
+        new rdf.NamedNode('http://example.org/predicate'),
+        new rdf.Literal('a'))
+      var tripleB = new rdf.Triple(
+        new rdf.NamedNode('http://example.org/subject'),
+        new rdf.NamedNode('http://example.org/predicate'),
+        new rdf.Literal('b'))
+      var tripleC = new rdf.Triple(
+        new rdf.NamedNode('http://example.org/subject'),
+        new rdf.NamedNode('http://example.org/predicate'),
+        new rdf.Literal('c'))
+
+      graphA.add(tripleA)
+      graphA.add(tripleB)
+      graphB.add(tripleB)
+      graphB.add(tripleC)
+      graphC = graphA.difference(graphB)
+      assert.equal(graphC.length, 1)
+      assert(graphC.toArray().shift().equals(tripleA))
+    })
+
+    it('.includes should test if the graph contains the given triple', function () {
+      var graph = new rdf.Graph()
+      var triple = new rdf.Triple(
+        new rdf.NamedNode('http://example.org/subject'),
+        new rdf.NamedNode('http://example.org/predicate'),
+        new rdf.Literal('test'))
+      var otherTriple = new rdf.Triple(
+        new rdf.NamedNode('http://example.org/subject'),
+        new rdf.NamedNode('http://example.org/predicate'),
+        new rdf.Literal('other'))
+
+      graph.add(triple)
+      assert.equal(graph.includes(triple), true)
+      assert.equal(graph.includes(otherTriple), false)
+    })
+
+    it('.intersection should return a graph with triples included also in the other graph', function () {
+      var graphA = new rdf.Graph()
+      var graphB = new rdf.Graph()
+      var tripleA = new rdf.Triple(
+        new rdf.NamedNode('http://example.org/subject'),
+        new rdf.NamedNode('http://example.org/predicate'),
+        new rdf.Literal('a'))
+      var tripleB = new rdf.Triple(
+        new rdf.NamedNode('http://example.org/subject'),
+        new rdf.NamedNode('http://example.org/predicate'),
+        new rdf.Literal('b'))
+      var tripleC = new rdf.Triple(
+        new rdf.NamedNode('http://example.org/subject'),
+        new rdf.NamedNode('http://example.org/predicate'),
+        new rdf.Literal('c'))
+
+      graphA.add(tripleA)
+      graphA.add(tripleB)
+      graphB.add(tripleB)
+      graphB.add(tripleC)
+      graphC = graphA.intersection(graphB)
+      assert.equal(graphC.length, 1)
+      assert(graphC.toArray().shift().equals(tripleB))
+    })
+
     it('.remove should remove the given triple', function () {
       var graph = new rdf.Graph()
       var triple = new rdf.Triple(
