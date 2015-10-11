@@ -108,11 +108,13 @@ rdf.BlankNode.nextId = 0
 rdf.Literal = function (value, language, datatype) {
   this.interfaceName = 'Literal'
   this.nominalValue = value
-  this.language = language
 
-  if (this.language) {
+  if (language) {
+    this.language = language
     this.datatype = rdf.Literal.langString
   } else {
+    this.language = null
+
     if (datatype) {
       this.datatype = typeof datatype === 'string' ? new rdf.NamedNode(datatype) : datatype
     } else {
