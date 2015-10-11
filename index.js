@@ -1,3 +1,5 @@
+var normalize = require('rdf-normalize')
+
 var rdf = {}
 
 rdf.encodeString = function (s) {
@@ -231,7 +233,7 @@ rdf.Graph.prototype.toString = function () {
 }
 
 rdf.Graph.prototype.equals = function (other) {
-  // TODO: implement sync version of http://json-ld.org/spec/latest/rdf-dataset-normalization/
+  return normalize(this) === normalize(other)
 }
 
 rdf.Graph.prototype.add = function (quad) {

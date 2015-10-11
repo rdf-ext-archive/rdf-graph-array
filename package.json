@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/rdf-ext/rdf-graph-array",
   "dependencies": {
+    "rdf-normalize": "^0.1.0"
   },
   "devDependencies": {
     "mocha": "^2.2.5"

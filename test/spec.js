@@ -361,6 +361,32 @@ describe('RDF-Graph', function () {
       assert(graphC.toArray().shift().equals(tripleA))
     })
 
+    it('.equals should compare the other graph for equality', function () {
+      var graphA = new rdf.Graph()
+      var graphB = new rdf.Graph()
+      var graphC = new rdf.Graph()
+
+      var tripleA1 = new rdf.Triple(
+        new rdf.NamedNode('http://example.org/subject'),
+        new rdf.NamedNode('http://example.org/predicate'),
+        new rdf.BlankNode())
+      var tripleA2 = new rdf.Triple(
+        new rdf.NamedNode('http://example.org/subject'),
+        new rdf.NamedNode('http://example.org/predicate'),
+        new rdf.BlankNode())
+      var tripleB = new rdf.Triple(
+        new rdf.NamedNode('http://example.org/subject'),
+        new rdf.NamedNode('http://example.org/predicate'),
+        new rdf.Literal('test'))
+
+      graphA.add(tripleA1)
+      graphB.add(tripleA2)
+      graphC.add(tripleB)
+
+      assert.equal(graphA.equals(graphB), true)
+      assert.equal(graphA.equals(graphC), false)
+    })
+
     it('.includes should test if the graph contains the given triple', function () {
       var graph = new rdf.Graph()
       var triple = new rdf.Triple(
