@@ -372,6 +372,8 @@ rdf.Graph.prototype.removeMatches = function (subject, predicate, object, graph)
   matches.forEach(function (quad) {
     self.remove(quad)
   })
+
+  return this
 }
 
 rdf.Graph.prototype.some = function (callback) {
