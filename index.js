@@ -278,6 +278,10 @@ rdf.Graph.prototype.addArray = function (array) {
   return this
 }
 
+rdf.Graph.prototype.clone = function () {
+  return new rdf.Graph(this)
+}
+
 rdf.Graph.prototype.difference = function (other) {
   var difference = new rdf.Graph()
 
