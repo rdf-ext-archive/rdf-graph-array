@@ -8,8 +8,10 @@ describe('RDF-Graph', function () {
       it('should implement the Node interface', function () {
         assert.equal(typeof node.nominalValue, 'string')
         assert.equal(typeof node.interfaceName, 'string')
-        assert.equal(typeof node.toString, 'function')
         assert.equal(typeof node.equals, 'function')
+        assert.equal(typeof node.toString, 'function')
+        assert.equal(typeof node.toNT, 'function')
+        assert.equal(typeof node.valueOf, 'function')
       })
     }
 
@@ -28,12 +30,6 @@ describe('RDF-Graph', function () {
         assert.equal(node.interfaceName, 'NamedNode')
       })
 
-      it('.toString should return the N-Triple representation', function () {
-        var node = new rdf.NamedNode('http://example.org')
-
-        assert.equal(node.toString(), '<http://example.org>')
-      })
-
       it('.equals should return true if all attributes are equivalent', function () {
         var nodeA = new rdf.NamedNode('http://example.org')
         var nodeB = new rdf.NamedNode('http://example.org')
@@ -50,12 +46,29 @@ describe('RDF-Graph', function () {
         assert(!node.equals('test'))
       })
 
-      // TODO: support RegExp compares in rdf.NamedNode.equals
       it('.equals should return true if the stringified representation matches a RegExp', function () {
         var node = new rdf.NamedNode('http://example.org')
 
         assert(node.equals(new RegExp('http.*')))
         assert(!node.equals(new RegExp('ftp.*')))
+      })
+
+      it('.toNT should return the N-Triple representation', function () {
+        var node = new rdf.NamedNode('http://example.org')
+
+        assert.equal(node.toNT(), '<http://example.org>')
+      })
+
+      it('.toString should return the nominalValue', function () {
+        var node = new rdf.NamedNode('http://example.org')
+
+        assert.equal(node.toString(), 'http://example.org')
+      })
+
+      it('.valueOf should return the nominalValue', function () {
+        var node = new rdf.NamedNode('http://example.org')
+
+        assert.equal(node.valueOf(), node.nominalValue.toString())
       })
     })
 
@@ -72,12 +85,6 @@ describe('RDF-Graph', function () {
         var node = new rdf.BlankNode()
 
         assert.equal(node.interfaceName, 'BlankNode')
-      })
-
-      it('.toString should return the N-Triple representation', function () {
-        var node = new rdf.BlankNode()
-
-        assert.equal(node.toString(), '_:' + node.nominalValue)
       })
 
       it('.equals should return true if all attributes are equivalent', function () {
@@ -102,6 +109,24 @@ describe('RDF-Graph', function () {
         assert(node.equals(new RegExp('b')))
         assert(!node.equals(new RegExp('<')))
       })
+
+      it('.toNT should return the N-Triple representation', function () {
+        var node = new rdf.BlankNode()
+
+        assert.equal(node.toNT(), '_:' + node.nominalValue.toString())
+      })
+
+      it('.toString should return the nominalValue prepended with "_:"', function () {
+        var node = new rdf.BlankNode()
+
+        assert.equal(node.toString(), '_:' + node.nominalValue.toString())
+      })
+
+      it('.valueOf should return the native value', function () {
+        var node = new rdf.BlankNode()
+
+        assert.equal(node.valueOf(), node.nominalValue.toString())
+      })
     })
 
     describe('Literal', function () {
@@ -125,24 +150,6 @@ describe('RDF-Graph', function () {
         var node = new rdf.Literal('test')
 
         assert.equal(node.interfaceName, 'Literal')
-      })
-
-      it('.toString should return the N-Triple representation', function () {
-        var node = new rdf.Literal('test')
-
-        assert.equal(node.toString(), '"test"')
-      })
-
-      it('.toString should return the N-Triple representation including the language', function () {
-        var node = new rdf.Literal('test', 'en')
-
-        assert.equal(node.toString(), '"test"@en')
-      })
-
-      it('.toString should return the N-Triple representation including the datatype', function () {
-        var node = new rdf.Literal('test', null, new rdf.NamedNode('http://example.org'))
-
-        assert.equal(node.toString(), '"test"^^<http://example.org>')
       })
 
       it('.equals should return true if all attributes are equivalent', function () {
@@ -171,6 +178,36 @@ describe('RDF-Graph', function () {
         assert(node.equals(new RegExp('t.*')))
         assert(!node.equals(new RegExp('i.*')))
       })
+
+      it('.toNT should return the N-Triple representation', function () {
+        var node = new rdf.Literal('test')
+
+        assert.equal(node.toNT(), '"test"')
+      })
+
+      it('.toNT should return the N-Triple representation including the language', function () {
+        var node = new rdf.Literal('test', 'en')
+
+        assert.equal(node.toNT(), '"test"@en')
+      })
+
+      it('.toNT should return the N-Triple representation including the datatype', function () {
+        var node = new rdf.Literal('test', null, new rdf.NamedNode('http://example.org'))
+
+        assert.equal(node.toNT(), '"test"^^<http://example.org>')
+      })
+
+      it('.toString should return the nominalValue prepended with "_:"', function () {
+        var node = new rdf.BlankNode()
+
+        assert.equal(node.toString(), '_:' + node.nominalValue.toString())
+      })
+
+      it('.valueOf should return the native value', function () {
+        var node = new rdf.BlankNode()
+
+        assert.equal(node.valueOf(), node.nominalValue.toString())
+      })
     })
   })
 
@@ -186,15 +223,6 @@ describe('RDF-Graph', function () {
       assert.equal(typeof triple.object, 'object')
       assert.equal(typeof triple.toString, 'function')
       assert.equal(typeof triple.equals, 'function')
-    })
-
-    it('.toString should return the N-Triples representation', function () {
-      var triple = new rdf.Triple(
-        new rdf.NamedNode('http://example.org/subject'),
-        new rdf.NamedNode('http://example.org/predicate'),
-        new rdf.Literal('test', 'en'))
-
-      assert.equal(triple.toString(), '<http://example.org/subject> <http://example.org/predicate> "test"@en .')
     })
 
     it('.equals should return true if the triple is equivalent', function () {
@@ -216,6 +244,24 @@ describe('RDF-Graph', function () {
       assert(tripleA.equals(tripleB))
       assert(!tripleA.equals(tripleC))
     })
+
+    it('.toNT should return the N-Triples representation', function () {
+      var triple = new rdf.Triple(
+        new rdf.NamedNode('http://example.org/subject'),
+        new rdf.NamedNode('http://example.org/predicate'),
+        new rdf.Literal('test', 'en'))
+
+      assert.equal(triple.toNT(), '<http://example.org/subject> <http://example.org/predicate> "test"@en .')
+    })
+
+    it('.toString should return the N-Triples representation', function () {
+      var triple = new rdf.Triple(
+        new rdf.NamedNode('http://example.org/subject'),
+        new rdf.NamedNode('http://example.org/predicate'),
+        new rdf.Literal('test', 'en'))
+
+      assert.equal(triple.toString(), '<http://example.org/subject> <http://example.org/predicate> "test"@en .')
+    })
   })
 
   describe('Quad', function () {
@@ -232,16 +278,6 @@ describe('RDF-Graph', function () {
       assert.equal(typeof quad.graph, 'object')
       assert.equal(typeof quad.toString, 'function')
       assert.equal(typeof quad.equals, 'function')
-    })
-
-    it('.toString should return the N-Quads representation', function () {
-      var quad = new rdf.Quad(
-        new rdf.NamedNode('http://example.org/subject'),
-        new rdf.NamedNode('http://example.org/predicate'),
-        new rdf.Literal('test', 'en'),
-        new rdf.NamedNode('http://example.org/graph'))
-
-      assert.equal(quad.toString(), '<http://example.org/subject> <http://example.org/predicate> "test"@en <http://example.org/graph> .')
     })
 
     it('.equals should return true if the triple is equivalent', function () {
@@ -272,6 +308,26 @@ describe('RDF-Graph', function () {
       assert(quadA.equals(quadB))
       assert(!quadA.equals(quadC))
       assert(!quadC.equals(quadD))
+    })
+
+    it('.toNT should return the N-Quads representation', function () {
+      var quad = new rdf.Quad(
+        new rdf.NamedNode('http://example.org/subject'),
+        new rdf.NamedNode('http://example.org/predicate'),
+        new rdf.Literal('test', 'en'),
+        new rdf.NamedNode('http://example.org/graph'))
+
+      assert.equal(quad.toNT(), '<http://example.org/subject> <http://example.org/predicate> "test"@en <http://example.org/graph> .')
+    })
+
+    it('.toString should return the N-Quads representation', function () {
+      var quad = new rdf.Quad(
+        new rdf.NamedNode('http://example.org/subject'),
+        new rdf.NamedNode('http://example.org/predicate'),
+        new rdf.Literal('test', 'en'),
+        new rdf.NamedNode('http://example.org/graph'))
+
+      assert.equal(quad.toString(), '<http://example.org/subject> <http://example.org/predicate> "test"@en <http://example.org/graph> .')
     })
   })
 
@@ -556,7 +612,7 @@ describe('RDF-Graph', function () {
       })
 
       assert.equal(objects.length, 2)
-      assert.equal(objects.join(' '), '<http://example.org/objectA> <http://example.org/objectB>')
+      assert.equal(objects.join(' '), 'http://example.org/objectA http://example.org/objectB')
     })
 
     it('.match should return a new graph that contains all triples that pass the given match parameters', function () {

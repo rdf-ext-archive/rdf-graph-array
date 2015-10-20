@@ -56,10 +56,6 @@ rdf.NamedNode = function (iri) {
   this.nominalValue = iri
 }
 
-rdf.NamedNode.prototype.toString = function () {
-  return '<' + rdf.encodeString(this.nominalValue) + '>'
-}
-
 rdf.NamedNode.prototype.equals = function (other) {
   if (typeof other === 'string') {
     return this.nominalValue === other
@@ -78,13 +74,21 @@ rdf.NamedNode.prototype.equals = function (other) {
   return false
 }
 
+rdf.NamedNode.prototype.toNT = function () {
+  return '<' + rdf.encodeString(this.nominalValue) + '>'
+}
+
+rdf.NamedNode.prototype.toString = function () {
+  return this.nominalValue
+}
+
+rdf.NamedNode.prototype.valueOf = function () {
+  return rdf.encodeString(this.nominalValue)
+}
+
 rdf.BlankNode = function () {
   this.interfaceName = 'BlankNode'
   this.nominalValue = 'b' + (++rdf.BlankNode.nextId)
-}
-
-rdf.BlankNode.prototype.toString = function () {
-  return '_:' + rdf.encodeString(this.nominalValue)
 }
 
 rdf.BlankNode.prototype.equals = function (other) {
@@ -105,9 +109,21 @@ rdf.BlankNode.prototype.equals = function (other) {
   return false
 }
 
+rdf.BlankNode.prototype.toNT = function () {
+  return '_:' + rdf.encodeString(this.nominalValue)
+}
+
+rdf.BlankNode.prototype.toString = function () {
+  return '_:' + this.nominalValue
+}
+
+rdf.BlankNode.prototype.valueOf = function () {
+  return rdf.encodeString(this.nominalValue)
+}
+
 rdf.BlankNode.nextId = 0
 
-rdf.Literal = function (value, language, datatype) {
+rdf.Literal = function (value, language, datatype, native) {
   this.interfaceName = 'Literal'
   this.nominalValue = value
 
@@ -118,25 +134,13 @@ rdf.Literal = function (value, language, datatype) {
     this.language = null
 
     if (datatype) {
-      this.datatype = typeof datatype === 'string' ? new rdf.NamedNode(datatype) : datatype
+      this.datatype = new rdf.NamedNode(datatype.toString())
     } else {
       this.datatype = rdf.Literal.string
     }
   }
-}
 
-rdf.Literal.prototype.toString = function () {
-  var string = '"' + rdf.encodeString(this.nominalValue) + '"'
-
-  if (this.language) {
-    string += '@' + this.language
-  }
-
-  if (this.datatype && !rdf.Literal.string.equals(this.datatype) && !rdf.Literal.langString.equals(this.datatype)) {
-    string += '^^' + this.datatype.toString()
-  }
-
-  return string
+  this.native = native
 }
 
 rdf.Literal.prototype.equals = function (other) {
@@ -169,6 +173,24 @@ rdf.Literal.prototype.equals = function (other) {
   return false
 }
 
+rdf.Literal.prototype.toNT = function () {
+  var string = '"' + rdf.encodeString(this.nominalValue) + '"'
+
+  if (this.language) {
+    string += '@' + this.language
+  }
+
+  if (this.datatype && !rdf.Literal.string.equals(this.datatype) && !rdf.Literal.langString.equals(this.datatype)) {
+    string += '^^' + this.datatype.toNT()
+  }
+
+  return string
+}
+
+rdf.Literal.prototype.toString = function () {
+  return rdf.encodeString(this.nominalValue)
+}
+
 rdf.Literal.langString = new rdf.NamedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#langString')
 rdf.Literal.string = new rdf.NamedNode('http://www.w3.org/2001/XMLSchema#string')
 
@@ -178,16 +200,20 @@ rdf.Triple = function (subject, predicate, object) {
   this.object = object
 }
 
-rdf.Triple.prototype.toString = function () {
-  return this.subject.toString() + ' ' + this.predicate.toString() + ' ' + this.object.toString() + ' .'
-}
-
 rdf.Triple.prototype.equals = function (other) {
   return this.subject.equals(other.subject) && this.predicate.equals(other.predicate) && this.object.equals(other.object)
 }
 
+rdf.Triple.prototype.toNT = function () {
+  return this.toString()
+}
+
 rdf.Triple.prototype.toQuad = function (graph) {
   return new rdf.Quad(this.subject, this.predicate, this.object, graph)
+}
+
+rdf.Triple.prototype.toString = function () {
+  return this.subject.toNT() + ' ' + this.predicate.toNT() + ' ' + this.object.toNT() + ' .'
 }
 
 rdf.Quad = function (subject, predicate, object, graph) {
@@ -197,12 +223,16 @@ rdf.Quad = function (subject, predicate, object, graph) {
   this.graph = graph
 }
 
-rdf.Quad.prototype.toString = function () {
-  return this.subject.toString() + ' ' + this.predicate.toString() + ' ' + this.object.toString() + ' ' + this.graph.toString() + ' .'
-}
-
 rdf.Quad.prototype.equals = function (other) {
   return this.subject.equals(other.subject) && this.predicate.equals(other.predicate) && this.object.equals(other.object) && this.graph.equals(other.graph)
+}
+
+rdf.Quad.prototype.toNT = function () {
+  return this.toString()
+}
+
+rdf.Quad.prototype.toString = function () {
+  return this.subject.toNT() + ' ' + this.predicate.toNT() + ' ' + this.object.toNT() + ' ' + this.graph.toNT() + ' .'
 }
 
 rdf.Quad.prototype.toTriple = function () {
