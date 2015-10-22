@@ -4,7 +4,8 @@
   "description": "Graph implementation using arrays",
   "main": "index.js",
   "scripts": {
-    "test": "standard && node_modules/mocha/bin/mocha"
+    "lint": "standard",
+    "test": "node_modules/rdf-test-graph/spec.js ."
   },
   "repository": {
     "type": "git",
@@ -22,9 +23,9 @@
   },
   "homepage": "https://github.com/rdf-ext/rdf-graph-array",
   "dependencies": {
-    "rdf-normalize": "^0.1.0"
+    "rdf-graph-abstract": "^0.1.0"
   },
   "devDependencies": {
-    "mocha": "^2.2.5"
+    "rdf-test-graph": "^0.1.0"
   }
 }
