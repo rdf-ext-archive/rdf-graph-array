@@ -1,6 +1,6 @@
 {
   "name": "rdf-graph-array",
-  "version": "0.1.0",
+  "version": "0.3.0-rc1",
   "description": "Graph implementation using arrays",
   "main": "index.js",
   "scripts": {
@@ -23,9 +23,9 @@
   },
   "homepage": "https://github.com/rdf-ext/rdf-graph-array",
   "dependencies": {
-    "rdf-graph-abstract": "^0.1.0"
+    "rdf-graph-abstract": "^0.3.0-rc1"
   },
   "devDependencies": {
-    "rdf-test-graph": "^0.1.0"
+    "rdf-test-graph": "^0.3.0-rc1"
   }
 }
