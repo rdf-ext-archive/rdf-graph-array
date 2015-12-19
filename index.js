@@ -33,7 +33,7 @@ rdf.NamedNode.prototype.toString = function () {
 }
 
 rdf.NamedNode.prototype.valueOf = function () {
-  return rdf.encodeString(this.nominalValue)
+  return this.nominalValue
 }
 
 rdf.BlankNode = function () {
@@ -68,7 +68,7 @@ rdf.BlankNode.prototype.toString = function () {
 }
 
 rdf.BlankNode.prototype.valueOf = function () {
-  return rdf.encodeString(this.nominalValue)
+  return this.nominalValue
 }
 
 rdf.BlankNode.nextId = 0
@@ -138,7 +138,7 @@ rdf.Literal.prototype.toNT = function () {
 }
 
 rdf.Literal.prototype.toString = function () {
-  return rdf.encodeString(this.nominalValue)
+  return this.nominalValue
 }
 
 rdf.Literal.langString = new rdf.NamedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#langString')
