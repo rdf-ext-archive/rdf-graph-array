@@ -104,7 +104,7 @@ rdf.Literal.prototype.equals = function (other) {
     }
 
     if (other.interfaceName === this.interfaceName) {
-      if (this.nominalValue !== other.nominalValue) {
+      if (this.nominalValue.toString() !== other.nominalValue.toString()) {
         return false
       }
 
