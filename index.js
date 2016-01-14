@@ -124,7 +124,7 @@ rdf.Literal.prototype.equals = function (other) {
 }
 
 rdf.Literal.prototype.toNT = function () {
-  var string = '"' + rdf.encodeString(this.nominalValue) + '"'
+  var string = '"' + rdf.encodeString(this.nominalValue.toString()) + '"'
 
   if (this.language) {
     string += '@' + this.language
