@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/rdf-ext/rdf-graph-array",
   "dependencies": {
+    "inherits": "^2.0.1",
     "rdf-graph-abstract": "^0.3.0"
   },
   "devDependencies": {

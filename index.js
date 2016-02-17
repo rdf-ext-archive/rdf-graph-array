@@ -1,5 +1,5 @@
 var rdf = require('rdf-graph-abstract')
-var util = require('util')
+var inherits = require('inherits')
 
 rdf.NamedNode = function (iri) {
   this.interfaceName = 'NamedNode'
@@ -198,7 +198,7 @@ rdf.Graph = function (other) {
   rdf.AbstractGraph.call(this, rdf.Graph, other)
 }
 
-util.inherits(rdf.Graph, rdf.AbstractGraph)
+inherits(rdf.Graph, rdf.AbstractGraph)
 
 rdf.Graph.prototype.add = function (quad) {
   var i = rdf.Graph.index(quad)
