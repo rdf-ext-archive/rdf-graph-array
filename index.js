@@ -36,9 +36,13 @@ rdf.NamedNode.prototype.valueOf = function () {
   return this.nominalValue
 }
 
-rdf.BlankNode = function () {
+rdf.BlankNode = function (label) {
   this.interfaceName = 'BlankNode'
-  this.nominalValue = 'b' + (++rdf.BlankNode.nextId)
+  if (label != null) {
+    this.nominalValue = label
+  } else {
+    this.nominalValue = 'b' + (++rdf.BlankNode.nextId)
+  }
 }
 
 rdf.BlankNode.prototype.equals = function (other) {
